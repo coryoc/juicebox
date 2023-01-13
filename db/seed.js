@@ -1,8 +1,13 @@
 const {
-    client,
-    getAllUsers,
-    createUser,
-    updateUser
+  client,
+  getAllUsers,
+  createUser,
+  updateUser,
+  getUserById,
+  createPost,
+  updatePost,
+  getAllPosts,
+  getPostsByUser
   } = require('./index');
   
   async function dropTables() {
@@ -69,17 +74,37 @@ const {
     try {
       console.log("Starting to test database...");
   
+
       console.log("Calling getAllUsers:");
       const users = await getAllUsers();
       console.log("Result", users);
   
-      console.log("Calling updateUser on users[0]");
 
+      console.log("Calling updateUser on users[0]");
       const updateUserResult = await updateUser(users[0].id, {
         name: "Newname Socool",
         location: "Canton, Ohio"
       });
       console.log("Result", updateUserResult)
+
+
+      console.log("Calling getAllPosts");
+      const posts = await getAllPosts();
+      console.log("Result:", posts);
+
+      console.log("Calling updatePost on posts[0]");
+      const updatePostResult = await updatePost(posts[0].id, {
+        title: "New Title",
+        content: "Fresh Content"
+      });
+      console.log("Results:", updatePostResult);
+
+
+      console.log("Calling getUserById with 1");
+      const albert = await getUserById(1);
+      console.log("Result:", albert);
+
+
 
       console.log("Finished database tests!");
     } catch (error) {
@@ -105,6 +130,36 @@ const {
         console.error("Error occurred when creating users.")
         throw error;
     }
+  }
+
+
+  async function createInitialPosts() {
+    try {
+      const [albert, sandra, glamgal] = await getAllUsers();
+
+      await createPost({
+        authorId: albert.id,
+        title: "First Post",
+        content: "This is my first post. I hope I love writing blogs as much as I love writing them."
+
+      });
+
+      await createPost({
+        authorId: sandra.id,
+        title: "First Post",
+        content: "My first post is unique and quirky!"
+
+      });
+
+      await createPost({
+        authorId: glamgal.id,
+        title: "First Post",
+        content: "Today I'll discuss the details surrounding today's news."
+
+      });
+
+    }
+
   }
   
 
