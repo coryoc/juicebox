@@ -7,7 +7,10 @@ const {
   createPost,
   updatePost,
   getAllPosts,
-  getPostsByUser
+  getPostsByUser,
+  getPostById,
+  addTagsToPost,
+  createPostTag
   } = require('./index');
   
   async function dropTables() {
@@ -176,8 +179,75 @@ const {
   }
   
 
+  async function createTags(tagList) {
+    if (tagList.length === 0) { 
+      return; 
+    }
+  
+    const insertValues = tagList.map(
+      (_, index) => `$${index + 1}`).join('), (');
+  
+    const selectValues = tagList.map(
+      (_, index) => `$${index + 1}`).join(', ');
+  
+      const stringTemplate = `${ insertValues } ${ selectValues }`
 
-  rebuildDB()
-    .then(testDB)
-    .catch(console.error)
-    .finally(() => client.end());
+    try {
+     await client.query( `
+      INSERT INTO tags(name)
+        VALUES ($1), ($2), ($3)
+        ON CONFLICT (name) DO NOTHING;
+    
+        SELECT * FROM tags
+        WHERE name
+        IN ($1, $2, $3);
+        `
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+
+  async function createInitialTags() {
+    try {
+      console.log("Starting to create tags...");
+  
+      const [happy, sad, inspo, catman] = await createTags([
+        '#happy', 
+        '#worst-day-ever', 
+        '#youcandoanything',
+        '#catmandoeverything'
+      ]);
+  
+      const [postOne, postTwo, postThree] = await getAllPosts();
+  
+      await addTagsToPost(postOne.id, [happy, inspo]);
+      await addTagsToPost(postTwo.id, [sad, inspo]);
+      await addTagsToPost(postThree.id, [happy, catman, inspo]);
+  
+      console.log("Finished creating tags!");
+    } catch (error) {
+      console.log("Error creating tags!");
+      throw error;
+    }
+  }
+
+
+  
+
+  async function rebuildDB() {
+    try {
+      client.connect();
+  
+      await dropTables();
+      await createTables();
+      await createInitialUsers();
+      await createInitialPosts();
+      await createInitialTags(); // new
+    } catch (error) {
+      console.log("Error during rebuildDB")
+      throw error;
+    }
+  }
+  
