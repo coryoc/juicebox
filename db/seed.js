@@ -15,7 +15,10 @@ const {
       console.log("Starting to drop tables...");
   
       await client.query(`
-        DROP TABLE IF EXISTS users;
+      DROP TABLE IF EXISTS post_tags;
+      DROP TABLE IF EXISTS tags;
+      DROP TABLE IF EXISTS posts;
+      DROP TABLE IF EXISTS users;
       `);
   
       console.log("Finished dropping tables!");
@@ -45,6 +48,14 @@ const {
         title varchar(255) NOT NULL,
         content TEXT NOT NULL,
         active BOOLEAN DEFAULT true
+      );
+      CREATE TABLE tags (
+        id SERIAL PRIMARY KEY,
+        name varchar(255) NOT NULL
+      );
+      CREATE TABLE post_tags (
+        "postId" INTEGER REFERENCES posts(id) UNIQUE, 
+        "tagId" INTEGER REFERENCES tags(id) UNIQUE
       );
     `);
 
@@ -158,8 +169,10 @@ const {
 
       });
 
-    }
-
+    } catch (error) {
+      console.error("Error occurred when creating users.")
+      throw error;
+      }
   }
   
 
