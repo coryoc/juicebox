@@ -1,18 +1,15 @@
-const {
+const {  
   client,
-  getAllUsers,
   createUser,
   updateUser,
+  getAllUsers,
   getUserById,
   createPost,
   updatePost,
   getAllPosts,
-  getPostsByUser,
-  getPostById,
-  addTagsToPost,
-  createPostTag,
+  getAllTags,
   getPostsByTagName
-  } = require('./index');
+} = require('./index');
   
   async function dropTables() {
     try {
@@ -58,8 +55,9 @@ const {
         name varchar(255) NOT NULL
       );
       CREATE TABLE post_tags (
-        "postId" INTEGER REFERENCES posts(id) UNIQUE, 
-        "tagId" INTEGER REFERENCES tags(id) UNIQUE
+        "postId" INTEGER REFERENCES posts(id),
+        "tagId" INTEGER REFERENCES tags(id),
+        UNIQUE ("postId", "tagId")
       );
     `);
 
@@ -128,7 +126,11 @@ const {
 
       console.log("Calling getPostsByTagName with #happy");
       const postsWithHappy = await getPostsByTagName("#happy");
-      console.log("Result:", postsWithHappy
+      console.log("Result:", postsWithHappy;
+      
+      console.log("Calling getAllTags");
+      const allTags = await getAllTags();
+      console.log("Result:", allTags);
 
       console.log("Finished database tests!");
     } catch (error) {
@@ -194,34 +196,7 @@ const {
   }
   
 
-  async function createTags(tagList) {
-    if (tagList.length === 0) { 
-      return; 
-    }
   
-    const insertValues = tagList.map(
-      (_, index) => `$${index + 1}`).join('), (');
-  
-    const selectValues = tagList.map(
-      (_, index) => `$${index + 1}`).join(', ');
-  
-      const stringTemplate = `${ insertValues } ${ selectValues }`
-
-    try {
-     await client.query( `
-      INSERT INTO tags(name)
-        VALUES ($1), ($2), ($3)
-        ON CONFLICT (name) DO NOTHING;
-    
-        SELECT * FROM tags
-        WHERE name
-        IN ($1, $2, $3);
-        `
-      );
-    } catch (error) {
-      throw error;
-    }
-  }
   
 
   async function createInitialTags() {
@@ -265,3 +240,7 @@ const {
     }
   }
   
+  rebuildDB()
+  .then(testDB)
+  .catch(console.error)
+  .finally(() => client.end());
