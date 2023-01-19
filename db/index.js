@@ -17,6 +17,21 @@ async function getAllUsers() {
         
 }
 
+async function getAllTags() {
+  try {
+  const { tags }= await client.query(
+      `SELECT *
+      FROM tags;
+      `);
+  
+      return { tags };
+  } catch (error) {
+      console.error (error);
+      throw error;
+  }
+      
+}
+
 
 
 async function createUser({ username, password, name, location }) {
@@ -144,7 +159,7 @@ async function getAllPosts() {
               ));
 
 
-            return posts;
+            return posts ;
 
     } catch (error) {
         console.error(error);
@@ -305,18 +320,6 @@ async function getPostById(postId) {
     }
   }
 
-  async function getAllTags() {
-    try {
-      const { rows } = await client.query(`
-        SELECT * 
-        FROM tags;
-      `);
-  
-      return { rows }
-    } catch (error) {
-      throw error;
-    }
-  }
   
   
   module.exports = {  
@@ -333,5 +336,6 @@ async function getPostById(postId) {
     createTags,
     getAllTags,
     createPostTag,
-    addTagsToPost
+    addTagsToPost,
+    
   }
