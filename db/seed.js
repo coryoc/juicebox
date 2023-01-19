@@ -83,61 +83,7 @@ const {
     }
   }
   
-  async function testDB() {
-    try {
-      console.log("Starting to test database...");
-  
 
-      console.log("Calling getAllUsers:");
-      const users = await getAllUsers();
-      console.log("Result", users);
-  
-
-      console.log("Calling updateUser on users[0]");
-      const updateUserResult = await updateUser(users[0].id, {
-        name: "Newname Socool",
-        location: "Canton, Ohio"
-      });
-      console.log("Result", updateUserResult)
-
-
-      console.log("Calling getAllPosts");
-      const posts = await getAllPosts();
-      console.log("Result:", posts);
-
-      console.log("Calling updatePost on posts[0]");
-      const updatePostResult = await updatePost(posts[0].id, {
-        title: "New Title",
-        content: "Fresh Content"
-      });
-      console.log("Results:", updatePostResult);
-
-      console.log("Calling updatePost on posts[1], only updating tags");
-      const updatePostTagsResult = await updatePost(posts[1].id, {
-        tags: ["#youcandoanything", "#redfish", "#bluefish"]
-      });
-      console.log("Result:", updatePostTagsResult);
-
-      
-
-      console.log("Calling getUserById with 1");
-      const albert = await getUserById(1);
-      console.log("Result:", albert);
-
-      console.log("Calling getPostsByTagName with #happy");
-      const postsWithHappy = await getPostsByTagName("#happy");
-      console.log("Result:", postsWithHappy;
-      
-      console.log("Calling getAllTags");
-      const allTags = await getAllTags();
-      console.log("Result:", allTags);
-
-      console.log("Finished database tests!");
-    } catch (error) {
-      console.error("Error testing database!");
-      throw error;
-    }
-  }
   
 
   async function createInitialUsers() {
@@ -234,9 +180,65 @@ const {
       await createTables();
       await createInitialUsers();
       await createInitialPosts();
-      await createInitialTags();
     } catch (error) {
       console.log("Error during rebuildDB")
+      throw error;
+    }
+  }
+
+
+  async function testDB() {
+    try {
+      console.log("Starting to test database...");
+  
+
+      console.log("Calling getAllUsers:");
+      const users = await getAllUsers();
+      console.log("Result", users);
+  
+
+      console.log("Calling updateUser on users[0]");
+      const updateUserResult = await updateUser(users[0].id, {
+        name: "Newname Socool",
+        location: "Canton, Ohio"
+      });
+      console.log("Result", updateUserResult)
+
+
+      console.log("Calling getAllPosts");
+      const posts = await getAllPosts();
+      console.log("Result:", posts);
+
+      console.log("Calling updatePost on posts[0]");
+      const updatePostResult = await updatePost(posts[0].id, {
+        title: "New Title",
+        content: "Fresh Content"
+      });
+      console.log("Results:", updatePostResult);
+
+      console.log("Calling updatePost on posts[1], only updating tags");
+      const updatePostTagsResult = await updatePost(posts[1].id, {
+        tags: ["#youcandoanything", "#redfish", "#bluefish"]
+      });
+      console.log("Result:", updatePostTagsResult);
+
+      
+
+      console.log("Calling getUserById with 1");
+      const albert = await getUserById(1);
+      console.log("Result:", albert);
+
+      console.log("Calling getPostsByTagName with #happy");
+      const postsWithHappy = await getPostsByTagName("#happy");
+      console.log("Result:", postsWithHappy;
+      
+      console.log("Calling getAllTags");
+      const allTags = await getAllTags();
+      console.log("Result:", allTags);
+
+      console.log("Finished database tests!");
+    } catch (error) {
+      console.error("Error testing database!");
       throw error;
     }
   }

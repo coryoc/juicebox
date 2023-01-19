@@ -18,19 +18,13 @@ async function getAllUsers() {
 }
 
 async function getAllTags() {
-  try {
-  const { tags }= await client.query(
+
+  const { rows: tags }= await client.query(
       `SELECT *
       FROM tags;
       `);
-  
-      return { tags };
-  } catch (error) {
-      console.error (error);
-      throw error;
-  }
-      
-}
+      return tags;
+  } 
 
 
 
