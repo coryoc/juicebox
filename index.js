@@ -15,14 +15,16 @@ server.listen(PORT, () => {
   console.log('The server is up on port', PORT)
 });
 
+server.use(morgan('dev'));
+
+server.use(express.json());
+
 
 server.use('/api', apiRouter);
 
 
 
-server.use(morgan('dev'));
 
-server.use(express.json());
 
 
 server.use((req, res, next) => {
